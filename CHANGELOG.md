@@ -4,6 +4,15 @@ InfrastructureModels.jl Change Log
 ### Staged
 - nothing
 
+### v0.0.13
+- Added arguments to the summary function for presentation order configuration, #29
+- Added row_to_typed_dict and row_to_dict helper functions, #28
+- Improved data standard documentation, #23, #24
+
+### v0.0.12
+- Added JuMP version upper bound
+- Fixed print_summary in Julia v1.0
+
 ### v0.0.11
 - Added explicit global keys argument to replicate
 
