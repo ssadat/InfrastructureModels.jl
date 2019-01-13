@@ -9,8 +9,8 @@ using Ipopt
 using ECOS
 #using Juniper
 
-ipopt_solver = Ipopt.Optimizer(print_level=0)
-ecos_solver = ECOS.Optimizer(verbose=0)
+ipopt_solver = with_optimizer(Ipopt.Optimizer, print_level=0)
+ecos_solver = with_optimizer(ECOS.Optimizer, verbose=0)
 #juniper_solver = JuniperSolver(ipopt_solver, log_levels=[])
 
 tolerance = 1e-5
@@ -31,6 +31,11 @@ function test_status(m1, m2)
     @test(JuMP.dual_status(m1) == JuMP.dual_status(m2))
 end
 
+function test_solution_status(m1, m2)
+    @test(JuMP.primal_status(m1) == JuMP.primal_status(m2))
+    @test(JuMP.dual_status(m1) == JuMP.dual_status(m2))
+end
+
 @testset "relaxation schemes" begin
 
     @testset "relaxation_sqr" begin
@@ -41,18 +46,18 @@ end
             end
             y_lb, y_ub = (x_lb^2, x_ub^2)
 
-            m = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(m, ipopt_solver)
+            m = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(m, ipopt_solver)
             @variable(m, x_lb <= x <= x_ub)
             @variable(m, y_lb <= y <= y_ub)
             @objective(m, Min, y)
             @constraint(m, x^2 == y)
             optimize!(m)
 
-            rm = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(rm, ipopt_solver)
+            rm = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(rm, ipopt_solver)
             @variable(rm, x_lb <= x <= x_ub)
             @variable(rm, y_lb <= y <= y_ub)
             @objective(rm, Min, y)
@@ -80,9 +85,9 @@ end
             x_lb, x_ub = 10*rand(2).*[-1,1]
             y_lb, y_ub = 10*rand(2).*[-1,1]
 
-            m = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(m, ipopt_solver)
+            m = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(m, ipopt_solver)
             @variable(m, x_lb <= x <= x_ub)
             @variable(m, y_lb <= y <= y_ub)
             @variable(m, z)
@@ -90,9 +95,9 @@ end
             @constraint(m, x*y == z)
             optimize!(m)
 
-            rm = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(rm, ipopt_solver)
+            rm = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(rm, ipopt_solver)
             @variable(rm, x_lb <= x <= x_ub)
             @variable(rm, y_lb <= y <= y_ub)
             @variable(rm, z)
@@ -122,9 +127,9 @@ end
             y_lb, y_ub = 10*rand(2).*[-1,1]
             z_lb, z_ub = 10*rand(2).*[-1,1]
 
-            m = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(m, ipopt_solver)
+            m = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(m, ipopt_solver)
             @variable(m, x_lb <= x <= x_ub)
             @variable(m, y_lb <= y <= y_ub)
             @variable(m, z_lb <= z <= z_ub)
@@ -133,9 +138,9 @@ end
             @NLconstraint(m, x*y*z == w)
             optimize!(m)
 
-            rm = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(rm, ipopt_solver)
+            rm = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(rm, ipopt_solver)
             @variable(rm, x_lb <= x <= x_ub)
             @variable(rm, y_lb <= y <= y_ub)
             @variable(rm, z_lb <= z <= z_ub)
@@ -168,9 +173,9 @@ end
             c_lb, c_ub = 10*rand(2).*[-1,1]
             d_lb, d_ub = 10*rand(2).*[-1,1]
 
-            m = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(m, ipopt_solver)
+            m = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(m, ipopt_solver)
             @variable(m, a_lb <= a <= a_ub)
             @variable(m, b_lb <= b <= b_ub)
             @variable(m, c_lb <= c <= c_ub)
@@ -179,9 +184,9 @@ end
             @NLconstraint(m, c^2 + d^2 == a*b)
             optimize!(m)
 
-            rm = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(rm, ipopt_solver)
+            rm = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(rm, ipopt_solver)
             @variable(rm, a_lb <= a <= a_ub)
             @variable(rm, b_lb <= b <= b_ub)
             @variable(rm, c_lb <= c <= c_ub)
@@ -213,9 +218,9 @@ end
             c_lb, c_ub = 10*rand(2).*[-1,1]
             d_lb, d_ub = 10*rand(2).*[-1,1]
 
-            m = Model()
-            MOI.empty!(ipopt_solver)
-            MOIU.resetoptimizer!(m, ipopt_solver)
+            m = Model(ipopt_solver)
+            #MOI.empty!(ipopt_solver)
+            #MOIU.resetoptimizer!(m, ipopt_solver)
             @variable(m, a_lb <= a <= a_ub)
             @variable(m, b_lb <= b <= b_ub)
             @variable(m, c_lb <= c <= c_ub)
@@ -224,9 +229,9 @@ end
             @NLconstraint(m, c^2 + d^2 == a*b)
             optimize!(m)
 
-            rm = Model()
-            MOI.empty!(ecos_solver)
-            MOIU.resetoptimizer!(rm, ecos_solver)
+            rm = Model(ecos_solver)
+            #MOI.empty!(ecos_solver)
+            #MOIU.resetoptimizer!(rm, ecos_solver)
             @variable(rm, a_lb <= a <= a_ub)
             @variable(rm, b_lb <= b <= b_ub)
             @variable(rm, c_lb <= c <= c_ub)
@@ -236,7 +241,9 @@ end
             optimize!(rm)
 
             @test(JuMP.objective_value(rm) <= JuMP.objective_value(m) + tolerance)
-            test_status(m, rm)
+            @test(JuMP.termination_status(m) == MOI.LOCALLY_SOLVED)
+            @test(JuMP.termination_status(rm) == MOI.OPTIMAL)
+            test_solution_status(m, rm)
 
             #=
             setobjectivesense(m, :Max)
